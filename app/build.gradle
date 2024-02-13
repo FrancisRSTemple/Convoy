@@ -1,16 +1,24 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
     namespace 'edu.temple.convoy'
-    compileSdk 33
+    compileSdk 34
+
+    def keystoreFile = rootProject.file("APIKeys.properties")
+    def properties = new Properties()
+    properties.load(new FileInputStream(keystoreFile))
+
+    // Extract API_KEY from properties
+    def googleMapsAPIKey = properties.getProperty("GOOGLE_MAPS_API_KEY") ?: ""
 
     defaultConfig {
         applicationId "edu.temple.convoy"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -18,6 +26,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        // Set API_KEY in defaultConfig
+        buildConfigField "String", "API_KEY", "\"${googleMapsAPIKey}\""
     }
 
     buildTypes {
@@ -48,16 +59,16 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.1'
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.2.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    implementation 'androidx.activity:activity-compose:1.8.2'
+    implementation "androidx.compose.ui:ui:1.6.1"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.6.1"
+    implementation 'androidx.compose.material:material:1.6.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.6.1"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.6.1"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.1"
 }
