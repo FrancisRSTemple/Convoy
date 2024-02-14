@@ -1,6 +1,7 @@
 package edu.temple.convoy
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            Log.d("APIKEY", "apikey = ${BuildConfig.GOOGLE_MAPS_API_KEY}")
             ConvoyTheme {
                 var isMember by remember{ mutableStateOf(true) }
 
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
                         Text(
                             text = "Don't have an account?",
-                            modifier = Modifier.clickable { isMember = true }
+                            modifier = Modifier.clickable { isMember = false }
                         )
                     }else{
                         Button_Composable("Sign up!")
