@@ -10,10 +10,10 @@ import java.net.ResponseCache
 import java.net.URL
 
 class ServerSide {
-    suspend fun registerPOST(baseUrl : URL){
+    suspend fun registerPOST(baseUrl : URL, details: Array<String>){
         return withContext(Dispatchers.IO){
             val registerUrl = "$baseUrl/REGISTER"
-            val registerData = "username=user1&firstname=Fran&lastname=Scal&password=1234"
+            val registerData = "username=${details[0]}&firstname=${details[1]}&lastname=${details[2]}&password=${details[3]}"
             Log.d(SERVER_RESPONSE_USER, doPOSTRequest(registerUrl, registerData))
         }
     }

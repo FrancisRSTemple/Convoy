@@ -1,6 +1,5 @@
 package edu.temple.convoy
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -12,12 +11,10 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import edu.temple.convoy.ui.theme.ConvoyTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.net.URL
 
@@ -32,25 +29,34 @@ class MainActivity : ComponentActivity() {
             Log.d("APIKEY", "apikey = ${BuildConfig.GOOGLE_MAPS_API_KEY}")
             ConvoyTheme {
                 var isMember by remember{ mutableStateOf(true) }
+                var fname by remember { mutableStateOf("") }
+                var lname by remember { mutableStateOf("") }
+                var uname by remember { mutableStateOf("") }
+                var pword by remember { mutableStateOf("") }
 
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (!isMember) OutlinedTextField_Composable("Full name")
-                    OutlinedTextField_Composable("Username")
-                    OutlinedTextField_Composable("Password")
+                    if (!isMember){
+                        fname = OutlinedTextField_Composable("First name")
+                        lname = OutlinedTextField_Composable("Last name")
+                    }
+                    uname = OutlinedTextField_Composable("Username")
+                    pword = OutlinedTextField_Composable("Password")
+
+                    val details = arrayOf( uname, fname, lname,pword)
 
                     if (isMember){
-                        Button_Composable("Log in!")
+                        Button_Composable("Log in!", details)
 
                         Text(
                             text = "Don't have an account? Click here!",
                             modifier = Modifier.clickable { isMember = false }
                         )
                     }else{
-                        Button_Composable("Sign up!")
+                        Button_Composable("Sign up!", details)
                     }
                 }
             }
@@ -59,12 +65,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun OutlinedTextField_Composable(nameOfLabel : String){
-    var text by remember{ mutableStateOf("") }
+fun OutlinedTextField_Composable(nameOfLabel: String) : String {
+    var text by remember { mutableStateOf("") }
     OutlinedTextField(
         value = text,
-        onValueChange = {text = it},
-        label = { Text(nameOfLabel)},
+        onValueChange = { text = it },
+        label = { Text(nameOfLabel) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -74,17 +80,18 @@ fun OutlinedTextField_Composable(nameOfLabel : String){
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done
         ),
-        visualTransformation = if(text.isEmpty()) VisualTransformation.None else VisualTransformation.None
+        visualTransformation = if (text.isEmpty()) VisualTransformation.None else VisualTransformation.None
     )
+    return text
 }
 
 @Composable
-fun Button_Composable(nameOfButton : String){
+fun Button_Composable(nameOfButton: String, details: Array<String>){
     val coroutineScope = rememberCoroutineScope()
 
     Button(onClick = {
         coroutineScope.launch {
-            ServerSide().registerPOST(URL(BASE_USER_REGLOG_URL))
+            ServerSide().registerPOST(URL(BASE_USER_REGLOG_URL), details)
         }
     }) {
         Text(text = nameOfButton)
