@@ -1,5 +1,6 @@
 package edu.temple.convoy
 
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -11,10 +12,18 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import edu.temple.convoy.ui.theme.ConvoyTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.net.URL
+
+val BASE_USER_REGLOG_URL = " https://kamorris.com/lab/convoy/account.php"
+val SERVER_RESPONSE_USER = "ServerResponseUser"
+val EXCEPTION_THROWN = "ExceptionThrown"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +46,7 @@ class MainActivity : ComponentActivity() {
                         Button_Composable("Log in!")
 
                         Text(
-                            text = "Don't have an account?",
+                            text = "Don't have an account? Click here!",
                             modifier = Modifier.clickable { isMember = false }
                         )
                     }else{
@@ -71,8 +80,12 @@ fun OutlinedTextField_Composable(nameOfLabel : String){
 
 @Composable
 fun Button_Composable(nameOfButton : String){
-    Button(onClick = {
+    val coroutineScope = rememberCoroutineScope()
 
+    Button(onClick = {
+        coroutineScope.launch {
+            ServerSide().registerPOST(URL(BASE_USER_REGLOG_URL))
+        }
     }) {
         Text(text = nameOfButton)
     }
@@ -81,7 +94,6 @@ fun Button_Composable(nameOfButton : String){
 @Composable
 fun Text_Composable(nameOfButton : String){
     Button(onClick = {
-
     }) {
         Text(text = nameOfButton)
     }
